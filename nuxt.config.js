@@ -58,6 +58,7 @@ export default {
     '/hotpepper': {
       target: 'http://webservice.recruit.co.jp/hotpepper',
       pathRewrite: { '^/hotpepper': '' }
+    }
   },
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
