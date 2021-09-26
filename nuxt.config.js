@@ -19,6 +19,13 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ],
+    //google maps apiのソースファイル
+    script: [
+      {
+        src:
+          "https://maps.google.com/maps/api/js?key=" + process.env.GOOGLE_API_KEY
+      }
     ]
   },
 
@@ -48,7 +55,9 @@ export default {
     proxy: true,
   },
   proxy: {
-    '/api/': { target: 'http://', pathRewrite: { '^/api/': '/' } }
+    '/hotpepper': {
+      target: 'http://webservice.recruit.co.jp/hotpepper',
+      pathRewrite: { '^/hotpepper': '' }
   },
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
