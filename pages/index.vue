@@ -74,8 +74,13 @@ export default {
     loader() {
       const l = this.loader
       this[l] = !this[l]
-      setTimeout(() => (this[l] = false), 3000)
+      setTimeout(() => (this[l] = false), 1000)
       this.loader = null
+      this.getLocation()
+      window.scroll({
+        top: 750,
+        behavior: "smooth"
+      })
     },
   },
 
@@ -117,6 +122,7 @@ export default {
       }
     },
 
+    // 位置情報取得：成功時の処理
     success(position) {
       this.latitude = position.coords.latitude
       this.longitude = position.coords.longitude
@@ -126,6 +132,7 @@ export default {
       }
     },
 
+    // 位置情報取得：失敗時の処理
     error(error) {
       switch (error.code) {
           case 1: //PERMISSION_DENIED
@@ -155,8 +162,8 @@ export default {
     getShops () {
       var priceCode = null
       var genre = null
-      var isTermArray = this.terms.length === 0 ? false :true
-      if (isTermArray) {
+      var isTermsArray = this.terms.length === 0 ? false : true
+      if (isTermsArray) {
         var priceCode = this.terms['priceCode']
         var genre = this.terms['genre']
         switch (priceRange) {
@@ -171,40 +178,46 @@ export default {
                 break;
             default:
                 priceCode = ''
+          }
         }
-      }
-      this.$axios.$get('/api/', {
-        params: {
-          key: process.env.HOTTPEPPER_API_KEY,
-          lat: this.latitude,
-          lng: this.longitude,
-          count: 100,
-          genre: genre,
-          budget: priceCode,
-          range: 4,
-          format: "json",
-        }
-      })
-      .then(res => {
-        console.log(process.env.HOTTPEPPER_API_KEY)
-        this.shops = res.results.shop
-        this.shops = this.ChooseAtRandom(this.shops)
-      })
+        this.$axios.$get("/api/", {
+          params: {
+            key: process.env.HOTPEPPER_API_KEY,
+            lat: this.latitude,
+            lng: this.longitude,
+            count: 100,
+            genre: genre,
+            budget: priceCode,
+            range: 4,
+            format: "json",
+          },
+          headers: {
+            "Access-Control-Allow-Origin": "*"
+          }
+        })
+        .then(res => {
+          this.shops = res.results.shop
+          this.shops = this.ChooseAtRandom(this.shops, 6);
+          this.length = res.results.shop.length
+          if (res.results.shop.length === 0) {
+              this.alert = true
+          }
+        })
     },
 
-    ChooceAtRandom(arrayData, count) {
-      // countが設定されていない場合は１にする
+    ChooseAtRandom (arrayData, count) {
+      // countが設定されていない場合は1にする
       var count = count || 1
       var arrayData = arrayData
       var result = []
       if (!arrayData) {
-        return
+          return
       }
       for (var i = 0; i < count; i++) {
-        var arrayIndex = Math.floor(Math.random() * arrayData.length)
-        result[i] = arrayData[arrayIndex]
-        // 1回選択された値は削除して再度選ばれないようにする
-        arrayData.splice(arrayIndex, 1)
+          var arrayIndex = Math.floor(Math.random() * arrayData.length)
+          result[i] = arrayData[arrayIndex]
+          // 1回選択された値は削除して再度選ばれないようにする
+          arrayData.splice(arrayIndex, 1)
       }
       return result
     }
