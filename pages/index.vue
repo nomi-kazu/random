@@ -1,77 +1,200 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <v-card class="logo py-4 d-flex justify-center">
-        <NuxtLogo />
-        <VuetifyLogo />
-      </v-card>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board
-            </a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
+  <v-container>
+    <StartBtn @get-location-shops="getLocation" />
+    <v-row>
+      <v-col cols="12">
+        <v-row>
+          <v-card
+            v-for="shop in shops"
+            :key="shop.id"
+            class="mx-auto my-4"
+            width="350"
           >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            nuxt
-            to="/inspire"
-          >
-            Continue
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+            <img height="250" :src="shop.photo.pc.l" />
+            <v-card-title>{{ shop.name | truncate(19, '...') }}</v-card-title>
+            <v-card-text>
+              <v-row align="center" class="mx-0">
+                <v-rating
+                  :value="4.5"
+                  color="amber"
+                  dense
+                  half-increments
+                  readonly
+                  size="14"
+                />
+              </v-row>
+              <div class="grey--text ml-4">4.5 (500)</div>
+              <div class="my-4 subtitle-1">
+                {{ shop.catch| truncate(30, '...') }}
+              </div>
+              <span class="grey--text">・平均予算：</span>
+              <br />
+              <span> {{ shop.budget.average| truncate(15, '...') }}</span>
+              <br />
+              <span class="grey--text">・アクセス：</span>
+              <br />
+              <span>{{ shop.mobile_access| truncate(23, '...') }}</span>
+              <br />
+              <span class="grey--text">・営業時間：</span>
+              <br />
+              <span>{{ shop.open | truncate(30, '...') }}</span>
+            </v-card-text>
+          </v-card>
+        </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
+
+<script>
+import StartBtn from '~/components/StartBtn'
+
+export default {
+  components: {
+    StartBtn
+  },
+
+  data () {
+    return {
+      latitude: 0,
+      longitude: 0,
+      alert: false,
+      shops: []
+    }
+  },
+
+  filters: {
+    truncate: (value, length) => {
+      var ommision = "..."
+      if (value.length <= length) {
+        return value
+      }
+      return value.substring(0, length) + ommision
+    }
+  },
+
+  created () {
+    this.getLocation()
+  },
+
+  methods: {
+    // 現在地の緯度、経度の取得
+    getLocation(terms) {
+      if (terms) {
+        this.terms = terms
+      }
+      if (process.client) {
+        if (!navigator.geolocation) {
+          alert("現在地情報を取得できませんでした。お使いのブラウザでは現在地情報を利用できない可能性があります。")
+          return
+        }
+        const options = {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        }
+        navigator.geolocation.getCurrentPosition(
+          this.success,
+          this.error,
+          options
+        )
+      }
+    },
+
+    success(position) {
+      this.latitude = position.coords.latitude
+      this.longitude = position.coords.longitude
+      this.getShops()
+      if (this.alert === true) {
+        this.alert = false
+      }
+    },
+
+    error(error) {
+      switch (error.code) {
+          case 1: //PERMISSION_DENIED
+              alert("位置情報の利用が許可されていません")
+              break
+          case 2: //POSITION_UNAVAILABLE
+              alert("現在位置が取得できませんでした")
+              break
+          case 3: //TIMEOUT
+              alert("タイムアウトになりました")
+              break
+          default:
+              alert("現在位置が取得できませんでした")
+              break
+      }
+    },
+
+    // ホットペッパーAPIから周辺のデータを取得
+    // G004 Japanese
+    // G007 Chinese
+    // G005 Western
+    // G003 Italian
+    // G001 Izakaya
+    // G002 Bar
+    // G017 Korean
+    // G014 Sweets
+    getShops () {
+      var priceCode = null
+      var genre = null
+      var isTermArray = this.terms.length === 0 ? false :true
+      if (isTermArray) {
+        var priceCode = this.terms['priceCode']
+        var genre = this.terms['genre']
+        switch (priceRange) {
+            case 1000:
+                priceCode = 'B009, B010'
+            case 2000:
+                priceCode = 'B011, B001'
+            case 3000:
+                priceCode = 'B002'
+            case 4000:
+                priceCode = 'B003'
+                break;
+            default:
+                priceCode = ''
+        }
+      }
+      console.log(process.env.HOTPEPPER_API_KEY)
+      this.$axios.$get('hotpepper/gourment/v1/', {
+        params: {
+          key: process.env.HOTTPEPPER_API_KEY,
+          lat: this.latitude,
+          lng: this.longitude,
+          count: 100,
+          genre: genre,
+          budget: priceCode,
+          range: 4,
+          format: "json",
+        }
+      })
+      .then(res => {
+        this.shops = res.results.shops
+        this.shops = this.ChooceAtRandom(this.shops, 6)
+        this.length = res.results.shop.length
+        if (res.results.shop.length === 0) {
+          this.alert = true
+        }
+      })
+    },
+
+    ChooceAtRandom(arrayData, count) {
+      // countが設定されていない場合は１にする
+      var count = count || 1
+      var arrayData = arrayData
+      var result = []
+      if (!arrayData) {
+        return
+      }
+      for (var i = 0; i < count; i++) {
+        var arrayIndex = Math.floor(Math.random() * arrayData.length)
+        result[i] = arrayData[arrayIndex]
+        arrayData.splice(arrayIndex, 1)
+      }
+      return result
+    }
+  }
+}
+</script>
