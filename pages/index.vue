@@ -173,8 +173,7 @@ export default {
                 priceCode = ''
         }
       }
-      console.log(process.env.HOTPEPPER_API_KEY)
-      this.$axios.$get('hotpepper/gourment/v1/', {
+      this.$axios.$get('/api/', {
         params: {
           key: process.env.HOTTPEPPER_API_KEY,
           lat: this.latitude,
@@ -187,12 +186,9 @@ export default {
         }
       })
       .then(res => {
-        this.shops = res.results.shops
-        this.shops = this.ChooceAtRandom(this.shops, 6)
-        this.length = res.results.shop.length
-        if (res.results.shop.length === 0) {
-          this.alert = true
-        }
+        console.log(process.env.HOTTPEPPER_API_KEY)
+        this.shops = res.results.shop
+        this.shops = this.ChooseAtRandom(this.shops)
       })
     },
 

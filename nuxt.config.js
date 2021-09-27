@@ -1,3 +1,4 @@
+require("dotenv").config()
 import colors from 'vuetify/es5/util/colors'
 
 export default {
@@ -43,21 +44,23 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
-    '@nuxtjs/vuetify',
+    '@nuxtjs/vuetify'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    "@nuxtjs/proxy",
+    '@nuxtjs/dotenv'
   ],
 
   axios: {
-    proxy: true,
+    proxy: true
   },
   proxy: {
-    '/hotpepper': {
-      target: 'http://webservice.recruit.co.jp/hotpepper',
-      pathRewrite: { '^/hotpepper': '' }
+    '/api': {
+      target: 'http://webservice.recruit.co.jp/hotpepper/gourmet/v1/',
+      pathRewrite: { '^/api': '/' } // rewrite
     }
   },
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
@@ -81,5 +84,6 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    extend(config, ctx) {}
   }
 }
