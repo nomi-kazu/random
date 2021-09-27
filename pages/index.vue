@@ -1,49 +1,53 @@
 <template>
-  <v-container>
-    <StartBtn @get-location-shops="getLocation" />
-    <v-row>
-      <v-col cols="12">
+  <v-app>
+    <v-flex xs="12" sm="12" md="12" cols="12">
+      <v-container>
+        <StartBtn @get-location-shops="getLocation" />
         <v-row>
-          <v-card
-            v-for="shop in shops"
-            :key="shop.id"
-            class="mx-auto my-4"
-            width="350"
-          >
-            <img height="250" :src="shop.photo.pc.l" />
-            <v-card-title>{{ shop.name | truncate(19, '...') }}</v-card-title>
-            <v-card-text>
-              <v-row align="center" class="mx-0">
-                <v-rating
-                  :value="4.5"
-                  color="amber"
-                  dense
-                  half-increments
-                  readonly
-                  size="14"
-                />
-              </v-row>
-              <div class="grey--text ml-4">4.5 (500)</div>
-              <div class="my-4 subtitle-1">
-                {{ shop.catch| truncate(30, '...') }}
-              </div>
-              <span class="grey--text">・平均予算：</span>
-              <br />
-              <span> {{ shop.budget.average| truncate(15, '...') }}</span>
-              <br />
-              <span class="grey--text">・アクセス：</span>
-              <br />
-              <span>{{ shop.mobile_access| truncate(23, '...') }}</span>
-              <br />
-              <span class="grey--text">・営業時間：</span>
-              <br />
-              <span>{{ shop.open | truncate(30, '...') }}</span>
-            </v-card-text>
-          </v-card>
+          <v-col>
+            <v-row>
+              <v-card
+                v-for="shop in shops"
+                :key="shop.id"
+                class="mx-auto my-4"
+                width="350"
+              >
+                <img height="250" :src="shop.photo.pc.l" />
+                <v-card-title>{{ shop.name | truncate(19, '...') }}</v-card-title>
+                <v-card-text>
+                  <v-row align="center" class="mx-0">
+                    <v-rating
+                      :value="4.5"
+                      color="amber"
+                      dense
+                      half-increments
+                      readonly
+                      size="14"
+                    />
+                  </v-row>
+                  <div class="grey--text ml-4">4.5 (500)</div>
+                  <div class="my-4 subtitle-1">
+                    {{ shop.catch| truncate(30, '...') }}
+                  </div>
+                  <span class="grey--text">・平均予算：</span>
+                  <br />
+                  <span> {{ shop.budget.average| truncate(15, '...') }}</span>
+                  <br />
+                  <span class="grey--text">・アクセス：</span>
+                  <br />
+                  <span>{{ shop.mobile_access| truncate(23, '...') }}</span>
+                  <br />
+                  <span class="grey--text">・営業時間：</span>
+                  <br />
+                  <span>{{ shop.open | truncate(30, '...') }}</span>
+                </v-card-text>
+              </v-card>
+            </v-row>
+          </v-col>
         </v-row>
-      </v-col>
-    </v-row>
-  </v-container>
+      </v-container>
+    </v-flex>
+  </v-app>
 </template>
 
 <script>
@@ -56,11 +60,23 @@ export default {
 
   data () {
     return {
+      loader: null,
+      loading: false,
       latitude: 0,
       longitude: 0,
       alert: false,
-      shops: []
+      shops: [],
+      terms: []
     }
+  },
+
+  watch: {
+    loader() {
+      const l = this.loader
+      this[l] = !this[l]
+      setTimeout(() => (this[l] = false), 3000)
+      this.loader = null
+    },
   },
 
   filters: {
@@ -73,7 +89,7 @@ export default {
     }
   },
 
-  created () {
+  created: function() {
     this.getLocation()
   },
 
@@ -191,6 +207,7 @@ export default {
       for (var i = 0; i < count; i++) {
         var arrayIndex = Math.floor(Math.random() * arrayData.length)
         result[i] = arrayData[arrayIndex]
+        // 1回選択された値は削除して再度選ばれないようにする
         arrayData.splice(arrayIndex, 1)
       }
       return result
