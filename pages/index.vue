@@ -41,7 +41,16 @@
                   <br />
                   <span>{{ shop.open | truncate(30, '...') }}</span>
                 </v-card-text>
+                <v-card-actions class="mt-4">
+                  <ShopDetailsDialog :shop="shop" />
+                </v-card-actions>
               </v-card>
+            </v-row>
+            <v-row align="center" justify="space-around">
+              <v-btn class="ma-2" color="#000" rounded outlined :loading="loading" :disabled="loading" @click="loader = 'loading'">
+                更新
+                <v-icon dark right>refresh</v-icon>
+              </v-btn>
             </v-row>
           </v-col>
         </v-row>
@@ -52,10 +61,12 @@
 
 <script>
 import StartBtn from '~/components/StartBtn'
+import ShopDetailsDialog from '~/components/ShopDetailsDialog'
 
 export default {
   components: {
-    StartBtn
+    StartBtn,
+    ShopDetailsDialog
   },
 
   data () {
