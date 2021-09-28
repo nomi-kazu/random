@@ -1,15 +1,15 @@
 <template>
   <v-app>
-    <v-flex xs="12" sm="12" md="12" cols="12">
+    <v-flex xs="12" sm="12" md="12">
       <v-container>
         <StartBtn @get-location-shops="getLocation" />
-        <v-row>
-          <v-col>
-            <v-row>
+        <v-row justify="center">
+          <v-col cols="12" md="12" xl="10">
+            <v-row justify="center">
               <v-card
                 v-for="shop in shops"
                 :key="shop.id"
-                class="mx-auto my-4"
+                class="mx-3 my-4"
                 width="350"
               >
                 <img height="250" :src="shop.photo.pc.l" />
@@ -121,8 +121,8 @@ export default {
           return
         }
         const options = {
-          enableHighAccuracy: true,
-          timeout: 5000,
+          enableHighAccuracy: false,
+          timeout: 15000,
           maximumAge: 0
         }
         navigator.geolocation.getCurrentPosition(
