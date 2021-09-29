@@ -25,7 +25,7 @@ export default {
     script: [
       {
         src:
-          "https://maps.google.com/maps/api/js?key=" + process.env.GOOGLE_API_KEY
+          "https://maps.google.com/maps/api/js?key=" + process.env.google_key
       }
     ]
   },
@@ -83,6 +83,10 @@ export default {
         }
       }
     }
+  },
+  env: {
+    hotpepper_key: process.env.HOTPEPPER_API_KEY,
+    google_key: process.env.GOOGLE_API_KEY
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

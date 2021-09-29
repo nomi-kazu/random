@@ -229,7 +229,7 @@ export default {
       this.$axios
         .$get("/api/", {
           params: {
-            key: process.env.HOTPEPPER_API_KEY,
+            key: process.env.hotpepper_key,
             lat: this.latitude ? this.latitude : null,
             lng: this.longitude ? this.longitude : null,
             count: 100,
