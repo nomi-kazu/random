@@ -30,12 +30,15 @@ export default {
     ]
   },
 
+  loading: { color: "#fff" },
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    "@/plugins/vue2-google-maps.js"
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -67,7 +70,7 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
@@ -85,5 +88,8 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     extend(config, ctx) {}
+  },
+  generate: { 
+    dir: 'public' 
   }
 }

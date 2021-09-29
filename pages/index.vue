@@ -1,61 +1,90 @@
 <template>
   <v-app>
-    <v-flex xs="12" sm="12" md="12">
-      <v-container>
+    <v-row align="center" justify="center">
+      <v-col class="text-center" cols="12">
+        <h1 class="display-2 font-weight-thin mb-4" style="color:#000">
+          何を食べたい気分？
+        </h1>
+        <h10 class="display-1 font-weight-thin mb-4" style="color:#000">
+          スタートして店舗をランダムで決めよう！
+        </h10>
+      </v-col>
+      <v-col class="text-center" cols="12">
         <StartBtn @get-location-shops="getLocation" />
+      </v-col>
+    </v-row>
+    <v-container>
+      <v-flex xs12 sm12 md12>
+        <h2 class="display-1 font-weight-thin my-5">
+          おすすめ店舗一覧
+        </h2>
         <v-row justify="center">
           <v-col cols="12" md="12" xl="10">
-            <v-row justify="center">
+            <v-row v-if="shops.length" justify="center">
               <v-card
                 v-for="shop in shops"
-                :key="shop.id"
+                :key="shop.shop_id"
                 class="mx-3 my-4"
                 width="350"
               >
-                <img height="250" :src="shop.photo.pc.l" />
-                <v-card-title>{{ shop.name | truncate(19, '...') }}</v-card-title>
-                <v-card-text>
-                  <v-row align="center" class="mx-0">
-                    <v-rating
-                      :value="4.5"
-                      color="amber"
-                      dense
-                      half-increments
-                      readonly
-                      size="14"
-                    />
-                  </v-row>
-                  <div class="grey--text ml-4">4.5 (500)</div>
+                <v-img height="250" :src="shop.photo" />
+                <v-card-title>
+                  {{ shop.name | truncate(15, "...") }}
+                </v-card-title>
+                <v-card-text style="height: 250px;">
                   <div class="my-4 subtitle-1">
-                    {{ shop.catch| truncate(30, '...') }}
+                    {{ shop.catch | truncate(30, "...") }}
                   </div>
-                  <span class="grey--text">・平均予算：</span>
+
+                  <span class="grey--text">平均予算: </span><br />
+                  <span> {{ shop.budget | truncate(20, "...") }}</span>
                   <br />
-                  <span> {{ shop.budget.average| truncate(15, '...') }}</span>
+                  <span class="grey--text">アクセス: </span>
                   <br />
-                  <span class="grey--text">・アクセス：</span>
+                  <span>{{ shop.mobile_access | truncate(23, "...") }}</span>
                   <br />
-                  <span>{{ shop.mobile_access| truncate(23, '...') }}</span>
+                  <span class="grey--text">開店時間: </span>
                   <br />
-                  <span class="grey--text">・営業時間：</span>
-                  <br />
-                  <span>{{ shop.open | truncate(30, '...') }}</span>
+                  <span>{{ shop.open | truncate(30, "...") }}</span>
                 </v-card-text>
                 <v-card-actions class="mt-4">
                   <ShopDetailsDialog :shop="shop" />
                 </v-card-actions>
               </v-card>
             </v-row>
-            <v-row align="center" justify="space-around">
-              <v-btn class="ma-2" color="#000" rounded outlined :loading="loading" :disabled="loading" @click="loader = 'loading'">
-                更新
-                <v-icon dark right>refresh</v-icon>
-              </v-btn>
+
+            <v-row v-if="!shops.length">
+              <v-card else class="mx-auto" width="100%">
+                <v-list-item three-line>
+                  <v-list-item-content>
+                    <v-list-item-title class="headline mb-1">
+                      すいません。見つかりませんでした。
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      条件か、位置情報を変更してもう一度スタートしてみてください。
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card>
             </v-row>
           </v-col>
         </v-row>
-      </v-container>
-    </v-flex>
+        <!-- 更新ボタン -->
+        <v-row align="center" justify="space-around">
+          <v-btn
+            class="ma-2"
+            color="primary"
+            rounded
+            outlined
+            :loading="loading"
+            :disabled="loading"
+            @click="loader = 'loading'"
+          >
+            VIEW MORE
+          </v-btn>
+        </v-row>
+      </v-flex>
+    </v-container>
   </v-app>
 </template>
 
@@ -69,34 +98,11 @@ export default {
     ShopDetailsDialog
   },
 
-  data () {
-    return {
-      loader: null,
-      loading: false,
-      latitude: 0,
-      longitude: 0,
-      alert: false,
-      shops: [],
-      terms: []
-    }
-  },
-
-  watch: {
-    loader() {
-      const l = this.loader
-      this[l] = !this[l]
-      setTimeout(() => (this[l] = false), 1000)
-      this.loader = null
-      this.getLocation()
-      window.scroll({
-        top: 750,
-        behavior: "smooth"
-      })
-    },
-  },
-
   filters: {
-    truncate: (value, length) => {
+    truncate: function(value, length) {
+      if (!value) {
+        return ""
+      }
       var ommision = "..."
       if (value.length <= length) {
         return value
@@ -104,20 +110,55 @@ export default {
       return value.substring(0, length) + ommision
     }
   },
-
-  created: function() {
-    this.getLocation()
+  data() {
+    return {
+      loader: null,
+      loading: false,
+      latitude: 35.6813517, // 初期値を東京駅に設定
+      longitude: 139.7665776, // 初期値を東京駅に設定
+      alert: false,
+      shops: [],
+      genre: [],
+      range: null,
+      locale: null
+    }
   },
-
+  watch: {
+    loader() {
+      const l = this.loader
+      this[l] = !this[l]
+      setTimeout(() => (this[l] = false), 1000)
+      this.loader = null
+      this.getShops()
+      window.scroll({
+        top: 750,
+        behavior: "smooth"
+      })
+    }
+  },
+  created: function() {
+    this.getShops()
+  },
   methods: {
     // 現在地の緯度、経度の取得
     getLocation(terms) {
       if (terms) {
-        this.terms = terms
+        this.range = terms["priceRange"]
+        this.genre = terms["genre"]
+        this.locale = terms["locale"]
+        // 位置が指定されていればそれで検索
+        if (this.locale) {
+          this.latitude = this.locale.lat
+          this.longitude = this.locale.lng
+          this.getShops()
+          return
+        }
       }
       if (process.client) {
         if (!navigator.geolocation) {
-          alert("現在地情報を取得できませんでした。お使いのブラウザでは現在地情報を利用できない可能性があります。")
+          alert(
+            "現在地情報を取得できませんでした。お使いのブラウザでは現在地情報を利用できない可能性があります。"
+          )
           return
         }
         const options = {
@@ -132,7 +173,6 @@ export default {
         )
       }
     },
-
     // 位置情報取得：成功時の処理
     success(position) {
       this.latitude = position.coords.latitude
@@ -142,65 +182,61 @@ export default {
         this.alert = false
       }
     },
-
     // 位置情報取得：失敗時の処理
     error(error) {
       switch (error.code) {
-          case 1: //PERMISSION_DENIED
-              alert("位置情報の利用が許可されていません")
-              break
-          case 2: //POSITION_UNAVAILABLE
-              alert("現在位置が取得できませんでした")
-              break
-          case 3: //TIMEOUT
-              alert("タイムアウトになりました")
-              break
-          default:
-              alert("現在位置が取得できませんでした")
-              break
+        case 1: //PERMISSION_DENIED
+          alert("位置情報の利用が許可されていません")
+          break
+        case 2: //POSITION_UNAVAILABLE
+          alert("現在位置が取得できませんでした")
+          break
+        case 3: //TIMEOUT
+          alert("タイムアウトになりました")
+          break
+        default:
+          alert("現在位置が取得できませんでした")
+          break
       }
     },
-
     // ホットペッパーAPIから周辺のデータを取得
     // G004 Japanese
     // G007 Chinese
     // G005 Western
-    // G003 Italian
+    // G006 Italian
     // G001 Izakaya
     // G002 Bar
     // G017 Korean
     // G014 Sweets
-    getShops () {
+    getShops() {
       var priceCode = null
-      var genre = null
-      var isTermsArray = this.terms.length === 0 ? false : true
-      if (isTermsArray) {
-        var priceCode = this.terms['priceCode']
-        var genre = this.terms['genre']
-        switch (priceRange) {
-            case 1000:
-                priceCode = 'B009, B010'
-            case 2000:
-                priceCode = 'B011, B001'
-            case 3000:
-                priceCode = 'B002'
-            case 4000:
-                priceCode = 'B003'
-                break;
-            default:
-                priceCode = ''
-          }
-        }
-        this.$axios.$get("/api/", {
+      switch (this.range) {
+        case 1000:
+          priceCode = "B009, B010"
+          break
+        case 2000:
+          priceCode = "B011, B001"
+          break
+        case 3000:
+          priceCode = "B002"
+          break
+        case 4000:
+          priceCode = "B003"
+          break
+        default:
+          priceCode = ""
+      }
+      this.$axios
+        .$get("/api/", {
           params: {
             key: process.env.HOTPEPPER_API_KEY,
-            lat: this.latitude,
-            lng: this.longitude,
+            lat: this.latitude ? this.latitude : null,
+            lng: this.longitude ? this.longitude : null,
             count: 100,
-            genre: genre,
+            genre: this.genre.length ? this.genre.toString() : null,
             budget: priceCode,
             range: 4,
-            format: "json",
+            format: "json"
           },
           headers: {
             "Access-Control-Allow-Origin": "*"
@@ -208,29 +244,42 @@ export default {
         })
         .then(res => {
           this.shops = res.results.shop
-          this.shops = this.ChooseAtRandom(this.shops, 6);
-          this.length = res.results.shop.length
-          if (res.results.shop.length === 0) {
-              this.alert = true
-          }
+          this.shops = this.ChooseAtRandom(this.shops)
         })
     },
-
-    ChooseAtRandom (arrayData, count) {
-      // countが設定されていない場合は1にする
-      var count = count || 1
-      var arrayData = arrayData
+    ChooseAtRandom(arrayData) {
+      // 取得件数によってcountを変更
+      var defaultCount = 5
+      var arrayLength = arrayData["length"]
+      var count = defaultCount <= arrayLength ? defaultCount : arrayLength
       var result = []
-      if (!arrayData) {
-          return
+      if (!arrayLength === 0) {
+        return []
       }
       for (var i = 0; i < count; i++) {
-          var arrayIndex = Math.floor(Math.random() * arrayData.length)
-          result[i] = arrayData[arrayIndex]
-          // 1回選択された値は削除して再度選ばれないようにする
-          arrayData.splice(arrayIndex, 1)
+        var arrayIndex = Math.floor(Math.random() * arrayData.length)
+        result[i] = arrayData[arrayIndex]
+        result[i] = this.convertShopJsonToArr(result[i])
+        arrayData.splice(arrayIndex, 1)
       }
       return result
+    },
+    convertShopJsonToArr(shop) {
+      return {
+        shop_id: shop.id,
+        lat: shop.lat,
+        lng: shop.lng,
+        name: shop.name,
+        catch: shop.catch,
+        capacity: shop.capacity,
+        photo: shop.photo.pc.l,
+        budget: shop.budget.average,
+        budget_memo: shop.budget_memo,
+        mobile_access: shop.mobile_access,
+        open: shop.open,
+        non_smoking: shop.non_smoking,
+        address: shop.address
+      }
     }
   }
 }
