@@ -63,7 +63,7 @@ export default {
   proxy: {
     '/api': {
       target: 'http://webservice.recruit.co.jp/hotpepper/gourmet/v1/',
-      pathRewrite: { '^/api': '/' } // rewrite
+      pathRewrite: { '^/api': '' } // rewrite
     }
   },
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
@@ -91,5 +91,6 @@ export default {
   },
   generate: { 
     dir: 'public' 
-  }
+  },
+  target: 'static',
 }
