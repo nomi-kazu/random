@@ -1,4 +1,4 @@
-require("dotenv").config()
+require('dotenv').config()
 import colors from 'vuetify/es5/util/colors'
 
 export default {
@@ -25,12 +25,12 @@ export default {
     script: [
       {
         src:
-          "https://maps.google.com/maps/api/js?key=" + process.env.google_key
+          'https://maps.google.com/maps/api/js?key=' + process.env.google_key
       }
     ]
   },
 
-  loading: { color: "#fff" },
+  loading: { color: '#fff' },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
@@ -54,7 +54,7 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/axios',
-    "@nuxtjs/proxy",
+    '@nuxtjs/proxy',
     '@nuxtjs/dotenv'
   ],
 
@@ -62,9 +62,9 @@ export default {
     proxy: true
   },
   proxy: {
-    '/api': {
+    '/api/': {
       target: 'http://webservice.recruit.co.jp/hotpepper/gourmet/v1/',
-      pathRewrite: { '^/api': '' } // rewrite
+      pathRewrite: { '^/api/': '/' } // rewrite
     }
   },
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
