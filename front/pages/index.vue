@@ -5,9 +5,9 @@
         <h1 class="display-2 font-weight-thin mb-4" style="color:#000">
           何を食べたい気分？
         </h1>
-        <h10 class="display-1 font-weight-thin mb-4" style="color:#000">
+        <h2 class="display-1 font-weight-thin mb-4" style="color:#000">
           スタートして店舗をランダムで決めよう！
-        </h10>
+        </h2>
       </v-col>
       <v-col class="text-center" cols="12">
         <StartBtn @get-location-shops="getLocation" />
