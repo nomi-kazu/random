@@ -35,9 +35,9 @@ jobs:
           name: docker-compose run api bundle exec rspec spec
           command: docker-compose run api bundle exec rspec spec
       # フロントエンド側テスト
-      - run:
-          name: docker-compose run front yarn run test
-          command: docker-compose run front yarn run test
+      # - run:
+      #     name: docker-compose run front yarn run test
+      #     command: docker-compose run front yarn run test
       - run:
           name: docker-compose down
           command: docker-compose down
