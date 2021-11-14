@@ -5,8 +5,8 @@ Rails.application.routes.draw do
         registrations: 'api/v1/auth/registrations',
         sessions: 'api/v1/auth/sessions'
       }
+      resources :users, only: [:show]
     end
-    resources :users, only: [:show]
   end
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 end
