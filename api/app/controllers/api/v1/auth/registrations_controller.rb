@@ -1,4 +1,10 @@
 class Api::V1::Auth::RegistrationsController < DeviseTokenAuth::RegistrationsController
+  before_action :authenticate_api_v1_user!, except: %i[create new]
+
+  def edit
+    render json: current_api_v1_user, serialzer: UserSerializer
+  end
+
   private
 
   # ストロングパラメーター設定

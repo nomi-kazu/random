@@ -13,6 +13,25 @@ RSpec.describe "Api::V1::Auth::Registrations", type: :request do
     end
   end
 
+  describe "DELETE /api/v1/auth" do
+    subject { post(api_v1_user_session_path, params: login_params)
+      delete(api_v1_user_registration_path, headers: {
+        uid: response.headers["uid"],
+        client: response.headers["client"],
+        "access-token": response.headers["access-token"]
+      })
+    }
+    let(:user) { create(:confirmed_user) }
+    let(:login_params) { { email: user.email, password: user.password } }
+
+    it "ユーザーを削除できる" do
+      subject
+      res = JSON.parse(response.body)
+      expect(res["status"]).to eq "success"
+      expect(User.all.size).to eq 0
+    end
+  end
+
   describe "POST /api/v1/auth/sign_in" do
     subject { post(api_v1_user_session_path, params: params) }
 
@@ -86,6 +105,63 @@ RSpec.describe "Api::V1::Auth::Registrations", type: :request do
         }})
         res = JSON.parse(response.body)
         expect(res["success"]).to be_truthy
+        expect(response).to have_http_status(200)
+      end
+    end
+  end
+
+  describe "PUT /api/v1/auth" do
+    subject { post(api_v1_user_session_path, params: login_params)
+      put(api_v1_user_registration_path, params: params, headers: {
+        uid: response.headers["uid"],
+        client: response.headers["client"],
+        "access-token": response.headers["access-token"]
+      })
+    }
+
+    context "渡す値が正しいとき" do
+      let(:user) { create(:confirmed_user) }
+      let(:params) { { name: 'テスト太郎', nickname: 'テストさん', image: 'https://image_url' } }
+      let(:login_params) { { email: user.email, password: user.password } }
+
+      it "値を変更できる" do
+        subject
+        res = JSON.parse(response.body)
+        expect(res["data"]["attributes"]["name"]).to eq('テスト太郎')
+        expect(res["data"]["attributes"]["nickname"]).to eq('テストさん')
+        expect(res["data"]["attributes"]["image"]).to eq('https://image_url')
+      end
+    end
+
+    context "渡す値が正しくないとき" do
+      let(:user) { create(:confirmed_user) }
+      let(:params) { { id: '2' } }
+      let(:login_params) { { email: user.email, password: user.password } }
+
+      it "値を変更できない" do
+        subject
+        res = JSON.parse(response.body)
+        expect(res["success"]).to eq(false)
+        expect(res["errors"]).to include("リクエストボディに適切なアカウント更新のデータを送信してください。")
+      end
+    end
+  end
+
+  describe "GET /api/v1/auth/edit" do
+    context "ユーザーがログインしているとき" do
+      let(:confirmed_user) { create(:confirmed_user) }
+      let(:params) { { email: confirmed_user.email, password: confirmed_user.password } }
+
+      it "ユーザー情報を返す" do
+        post(api_v1_user_session_path, params: params)
+        get(edit_api_v1_user_registration_path, { headers: {
+          uid: response.headers["uid"],
+          client: response.headers["client"],
+          "access-token": response.headers["access-token"]
+        }})
+        res = JSON.parse(response.body)
+        expect(res["data"]["id"]).to eq(User.last.id.to_s)
+        expect(res["data"]["attributes"]["name"]).to eq(User.last.name)
         expect(response).to have_http_status(200)
       end
     end
