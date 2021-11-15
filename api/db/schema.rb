@@ -32,10 +32,12 @@ ActiveRecord::Schema.define(version: 2021_11_14_113747) do
     t.datetime "last_sign_in_at"
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
-    t.string "name"
-    t.string "nickname"
+    t.string "name", limit: 50
+    t.string "username", limit: 30
     t.string "image"
     t.string "email"
+    t.string "address", limit: 30
+    t.string "profile"
     t.json "tokens"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
