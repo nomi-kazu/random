@@ -89,15 +89,7 @@
 </template>
 
 <script>
-import StartBtn from '~/components/StartBtn'
-import ShopDetailsDialog from '~/components/ShopDetailsDialog'
-
 export default {
-  components: {
-    StartBtn,
-    ShopDetailsDialog
-  },
-
   filters: {
     truncate: function(value, length) {
       if (!value) {
