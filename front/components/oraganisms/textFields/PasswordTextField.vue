@@ -1,6 +1,6 @@
 <template>
   <!-- バリデーションを追加 -->
-  <v-text-filed v-model="valueModel" />
+  <v-text-field v-model="valueModel" />
 </template>
 
 <script>
