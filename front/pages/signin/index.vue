@@ -19,7 +19,12 @@
           />
 
           <v-card-actions>
-            <v-btn class="info" large block>
+            <v-btn
+              class="info"
+              large
+              block
+              @click="login"
+            >
               ログイン
             </v-btn>
           </v-card-actions>
@@ -30,6 +35,9 @@
 </template>
 
 <script>
+import Cookies from 'universal-cookie'
+const cookies = new Cookies()
+
 export default {
   data: () => ({
     showPassword: false,
@@ -43,6 +51,24 @@ export default {
         return value.length >= 8 || 'Min 8 characters'
       }
     }
-  })
+  }),
+
+  methods: {
+    async login () {
+      try {
+        await this.$store.dispatch('login', {
+          data: {
+            email: this.email,
+            password: this.password
+          }
+        })
+        cookies.set('access-token', this.$store.state.access_token)
+        this.$router.push('/')
+      } catch (e) {
+        this.formError = e.message
+        console.log(this.formError)
+      }
+    }
+  }
 }
 </script>
