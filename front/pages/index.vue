@@ -1,5 +1,7 @@
 <template>
   <v-app>
+    <p @click="logout">ログアウト</p>
+    <p>{{ $store.state.uid }} : {{ $store.state.accessToken }}</p>
     <v-row align="center" justify="center">
       <v-col class="text-center" cols="12">
         <h1 class="display-2 font-weight-thin mb-4" style="color:#000">
@@ -89,15 +91,10 @@
 </template>
 
 <script>
-import StartBtn from '~/components/StartBtn'
-import ShopDetailsDialog from '~/components/ShopDetailsDialog'
+import Cookies from 'universal-cookie'
+const cookies = new Cookies()
 
 export default {
-  components: {
-    StartBtn,
-    ShopDetailsDialog
-  },
-
   filters: {
     truncate: function(value, length) {
       if (!value) {
@@ -279,6 +276,22 @@ export default {
         open: shop.open,
         non_smoking: shop.non_smoking,
         address: shop.address
+      }
+    },
+    async logout () {
+      try {
+        await this.$store.dispatch('logout',
+          {
+            accessToken: cookies.get('access-token'),
+            client: cookies.get('client'),
+            uid: cookies.get('uid')
+          })
+        cookies.remove('access-token')
+        cookies.remove('client')
+        cookies.remove('uid')
+        this.$router.push('/signin')
+      } catch (e) {
+        console.log(this.formError)
       }
     }
   }

@@ -20,13 +20,7 @@
 </template>
 
 <script>
-import SearchTermDialog from '~/components/SearchTermDialog'
-
 export default {
-  components: {
-    SearchTermDialog
-  },
-
   data () {
     return {
       dialog: false,

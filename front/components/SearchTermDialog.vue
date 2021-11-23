@@ -527,12 +527,7 @@
 </template>
 
 <script>
-import SearchFromMap from "~/components/SearchFromMap"
-
 export default {
-  components: {
-    SearchFromMap
-  },
   data() {
     return {
       dialog: false,
