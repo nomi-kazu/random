@@ -81,7 +81,7 @@ export default {
           email: this.email,
           password: this.password
         })
-        cookies.set('access-token', this.$store.state.access_token)
+        cookies.set('access-token', this.$store.state.accessToken)
         cookies.set('client', this.$store.state.client)
         cookies.set('uid', this.$store.state.uid)
         this.$router.push(`/user/${this.$store.state.id}`)
