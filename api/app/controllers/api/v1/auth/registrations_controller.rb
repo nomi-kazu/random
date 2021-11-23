@@ -9,7 +9,7 @@ class Api::V1::Auth::RegistrationsController < DeviseTokenAuth::RegistrationsCon
 
   # ストロングパラメーター設定
   def sign_up_params
-    params.permit(:email, :password)
+    params.permit(:email, :password, :username).merge(username: default_username)
   end
 
   def account_update_params
@@ -22,5 +22,9 @@ class Api::V1::Auth::RegistrationsController < DeviseTokenAuth::RegistrationsCon
 
   def render_update_success
     render json: @resource, serializer: UserSerializer
+  end
+
+  def default_username
+    SecureRandom.alphanumeric(15)
   end
 end
