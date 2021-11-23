@@ -5,6 +5,7 @@
         <v-form>
           <v-text-field
             v-model="email"
+            :rules="[rules.required]"
             label="メール"
           />
 
@@ -23,6 +24,7 @@
               class="info"
               large
               block
+              :disabled="disabled"
               @click="login"
             >
               ログイン
@@ -41,17 +43,36 @@ const cookies = new Cookies()
 export default {
   data: () => ({
     showPassword: false,
+    disabled: true,
     password: '',
     email: '',
+    error: [],
     rules: {
       required: (value) => {
-        return !!value || 'Required.'
+        return !!value || '入力してください'
       },
       min: (value) => {
-        return value.length >= 8 || 'Min 8 characters'
+        return value.length >= 8 || '8文字以上入力してください'
       }
     }
   }),
+
+  watch: {
+    email (e) {
+      if (this.email && this.password && this.password.length >= 8) {
+        this.disabled = false
+      } else {
+        this.disabled = true
+      }
+    },
+    password (e) {
+      if (this.email && this.password && this.password.length >= 8) {
+        this.disabled = false
+      } else {
+        this.disabled = true
+      }
+    }
+  },
 
   methods: {
     async login () {
@@ -65,7 +86,7 @@ export default {
         cookies.set('uid', this.$store.state.uid)
         this.$router.push(`/user/${this.$store.state.id}`)
       } catch (e) {
-        this.formError = e.message
+        console.log(this.formError)
       }
     }
   }

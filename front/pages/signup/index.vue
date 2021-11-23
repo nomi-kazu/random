@@ -42,9 +42,10 @@
               class="info"
               large
               block
+              :disabled="disabled"
               @click="signUp"
             >
-              ログイン
+              新規登録
             </v-btn>
           </v-card-actions>
         </v-form>
@@ -57,14 +58,40 @@
 export default {
   data: () => ({
     showPassword: false,
+    disabled: true,
     name: '',
     email: '',
     password: '',
     rules: {
-      required: (value) => { return !!value || 'Required.' },
-      min: (value) => { return value.length >= 8 || 'Min 8 characters' }
+      required: (value) => { return !!value || '入力してください' },
+      min: (value) => { return value.length >= 8 || '8文字以上入力してください' }
     }
   }),
+
+  watch: {
+    email (e) {
+      if (this.email && this.checkPassword() && this.name) {
+        this.disabled = false
+      } else {
+        this.disabled = true
+      }
+    },
+    password (e) {
+      if (this.email && this.checkPassword() && this.name) {
+        this.disabled = false
+      } else {
+        this.disabled = true
+      }
+    },
+    name (e) {
+      if (this.email && this.checkPassword() && this.name) {
+        this.disabled = false
+      } else {
+        this.disabled = true
+      }
+    }
+  },
+
   methods: {
     async signUp () {
       try {
@@ -78,6 +105,9 @@ export default {
         this.formError = e.message
         console.log(this.formError)
       }
+    },
+    checkPassword () {
+      return this.password.length >= 8 && this.password
     }
   }
 }
