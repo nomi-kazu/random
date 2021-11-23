@@ -39,6 +39,9 @@ module App
     
     config.api_only = true
 
+    config.middleware.use Rack::MethodOverride
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
     config.middleware.use ActionDispatch::Flash
   end
 end
