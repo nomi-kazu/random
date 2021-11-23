@@ -1,16 +1,25 @@
+import Cookies from 'universal-cookie'
+
 export const state = () => {
   return {
     access_token: null,
     uid: null,
+    client: null,
     id: null
   }
 }
 export const mutations = {
   setUser (state, res) {
     state.access_token = res.headers['access-token']
-    state.uid = res.data.data.uid
+    state.uid = res.headers.uid
+    state.client = res.headers.client
     state.id = res.data.data.id
     // state.client
+  },
+  setHeader (state, headers) {
+    state.access_token = headers['access-token']
+    state.uid = headers.uid
+    state.client = headers.client
   }
 }
 
@@ -27,6 +36,15 @@ export const actions = {
         throw new Error('Bad credentials')
       }
       throw error
+    }
+  },
+  nuxtClientInit ({ commit }) {
+    const cookies = new Cookies()
+    try {
+      console.log(cookies)
+      commit('setHeader', { headers: cookies.cookies})
+    } catch (err) {
+      // No valid cookie found
     }
   }
 }

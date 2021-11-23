@@ -38,8 +38,9 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    'plugins/vue2-google-maps.js',
-    'plugins/axios' 
+    '~/plugins/vue2-google-maps.js',
+    '~/plugins/axios',
+    '~/plugins/nuxt-client-init.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
