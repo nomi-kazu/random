@@ -57,13 +57,11 @@ export default {
     async login () {
       try {
         await this.$store.dispatch('login', {
-          data: {
-            email: this.email,
-            password: this.password
-          }
+          email: this.email,
+          password: this.password
         })
         cookies.set('access-token', this.$store.state.access_token)
-        this.$router.push('/')
+        this.$router.push(`/user/${this.$store.state.id}`)
       } catch (e) {
         this.formError = e.message
         console.log(this.formError)

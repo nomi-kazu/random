@@ -1,13 +1,15 @@
 export const state = () => {
   return {
     access_token: null,
-    uid: null
+    uid: null,
+    id: null
   }
 }
 export const mutations = {
   setUser (state, res) {
     state.access_token = res.headers['access-token']
     state.uid = res.data.data.uid
+    state.id = res.data.data.id
     // state.client
   }
 }
