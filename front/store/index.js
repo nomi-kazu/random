@@ -25,7 +25,7 @@ export const mutations = {
   },
   clearUser (state) {
     state.accessToken = null
-    state.isAuthenticated = null
+    state.isAuthenticated = false
     state.uid = null
     state.client = null
     state.id = null
@@ -35,9 +35,10 @@ export const mutations = {
 export const actions = {
   async login ({ commit }, { email, password }) {
     try {
-      await this.$axios.post(process.env.API_URL + '/api/v1/auth/sign_in', { email, password }
-      ).then((res) => {
-        console.log(res)
+      await this.$axios.post(process.env.API_URL + '/api/v1/auth/sign_in', {
+        email,
+        password
+      }).then((res) => {
         commit('setUser', res)
       })
     } catch (error) {
