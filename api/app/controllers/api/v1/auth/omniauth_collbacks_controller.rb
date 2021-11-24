@@ -6,6 +6,7 @@ class Api::V1::Auth::OmniauthCallbacksController < DeviseTokenAuth::OmniauthCall
     # before authentication.
     devise_mapping = get_devise_mapping
     redirect_route = get_redirect_route(devise_mapping)
+
       case params[:provider]
       when "google_oauth2"
         request.env['omniauth.params'] = request.env['omniauth.params'].merge({auth_origin_url: "http://localhost:8080/auth/google_oauth2"})
@@ -86,5 +87,42 @@ class Api::V1::Auth::OmniauthCallbacksController < DeviseTokenAuth::OmniauthCall
     } if auth_hash['provider'] == 'facebook'
 
     user.assign_attributes(extra_info)
+  end
+
+  def render_data_or_redirect(message, data, user_data = {})
+
+    # We handle inAppBrowser and newWindow the same, but it is nice
+    # to support values in case people need custom implementations for each case
+    # (For example, nbrustein does not allow new users to be created if logging in with
+    # an inAppBrowser)
+    #
+    # See app/views/devise_token_auth/omniauth_external_window.html.erb to understand
+    # why we can handle these both the same.  The view is setup to handle both cases
+    # at the same time.
+    if ['inAppBrowser', 'newWindow'].include?(omniauth_window_type)
+      render_data(message, user_data.merge(data))
+
+    elsif auth_origin_url # default to same-window implementation, which forwards back to auth_origin_url
+
+      # build and redirect to destination url
+      redirect_to "#{DeviseTokenAuth::Url.generate(auth_origin_url, data.merge(blank: true))}?username=#{current_api_v1_user.username}&id=#{current_api_v1_user.id}"
+    else
+
+      # there SHOULD always be an auth_origin_url, but if someone does something silly
+      # like coming straight to this url or refreshing the page at the wrong time, there may not be one.
+      # In that case, just render in plain text the error message if there is one or otherwise
+      # a generic message.
+      fallback_render data[:error] || 'An error occurred'
+    end
+  end
+
+  def get_resource_from_auth_hash
+    super
+    @resource.assign_attributes({username: default_username}) if @resource.new_record?
+    @resource
+  end
+
+  def default_username
+    SecureRandom.alphanumeric(15)
   end
 end
