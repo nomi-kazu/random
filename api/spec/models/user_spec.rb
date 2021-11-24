@@ -119,4 +119,11 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe 'ActiveStorage - avatar' do
+    let(:user) { create(:confirmed_user, :with_avatar) }
+    it 'ユーザーにアタッチされている' do
+      expect(user.avatar.attached?).to eq true
+    end
+  end
 end
