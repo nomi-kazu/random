@@ -7,16 +7,7 @@ class Api::V1::Auth::OmniauthCallbacksController < DeviseTokenAuth::OmniauthCall
     devise_mapping = get_devise_mapping
     redirect_route = get_redirect_route(devise_mapping)
 
-      case params[:provider]
-      when "google_oauth2"
-        request.env['omniauth.params'] = request.env['omniauth.params'].merge({auth_origin_url: "http://localhost:8080/auth/google_oauth2"})
-      when "twitter"
-        request.env['omniauth.params'] = request.env['omniauth.params'].merge({auth_origin_url: "http://localhost:8080/auth/twitter"})
-      when "instagram"
-        request.env['omniauth.params'] = request.env['omniauth.params'].merge({auth_origin_url: "http://localhost:8080/auth/instagram"})
-      when "facebook"
-        request.env['omniauth.params'] = request.env['omniauth.params'].merge({auth_origin_url: "http://localhost:8080/auth/facebook"})
-      end
+    request.env['omniauth.params'] = request.env['omniauth.params'].merge({auth_origin_url: "http://localhost:8080/auth/oauth"})
     # preserve omniauth info for success route. ignore 'extra' in twitter
     # auth response to avoid CookieOverflow.
     session['dta.omniauth.auth'] = request.env['omniauth.auth'].except('extra')
