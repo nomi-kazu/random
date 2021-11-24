@@ -1,9 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Users", type: :request do
-  describe "GET /api/users/:id" do
+  describe 'GET /api/v1/users/:username' do
+    subject(:call_api) { get "/api/v1/users/#{user.username}" }
+
     let(:user) { create(:user) }
-    subject(:call_api) { get(api_v1_user_path(user)) }
+    subject{ get(api_v1_user_path(user)) }
     it "ユーザーのデータを返す" do
       call_api
       res = JSON.parse(response.body)
