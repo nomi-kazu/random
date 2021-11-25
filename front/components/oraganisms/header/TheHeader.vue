@@ -1,21 +1,26 @@
 <template>
-  <HeaderContainer>
-    <GuestHeader v-if="isGuest" />
-
-    <LoginHeader v-if="isLogin" />
+  <HeaderContainer @click="onClick">
+    <v-spacer />
+    <keep-alive>
+      <component :is="getComponentName" />
+    </keep-alive>
   </HeaderContainer>
 </template>
 
 <script>
 export default {
   computed: {
-    isLogin () {
-      // Login済みか判定
-      return false
+    getComponentName () {
+      return this.isLogin ? 'LoginHeader' : 'GuestHeader'
     },
-    isGuset () {
-      // Loginしていないか判定
-      return true
+    isLogin () {
+      return this.$store.getters['authentication/isAuthenticated']
+    }
+  },
+
+  methods: {
+    onClick () {
+      return this.$emit('click')
     }
   }
 }
