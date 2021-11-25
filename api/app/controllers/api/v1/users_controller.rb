@@ -1,8 +1,12 @@
 class Api::V1::UsersController < ApplicationController
 
   def show
-    @user = User.find(params[:id])
-    render json: @user, serializer: UserSerializer
+    @user = User.find_by(username: params[:username])
+    if @user
+      render json: @user, serializer: UserSerializer
+    else
+      head :not_found
+    end
   end
 
 end

@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Users", type: :request do
-  describe "GET /api/users/:id" do
+  describe 'GET /api/v1/users/:username' do
+    subject(:call_api) { get "/api/v1/users/#{user.username}" }
     let(:user) { create(:user) }
-    subject(:call_api) { get(api_v1_user_path(user)) }
+
     it "ユーザーのデータを返す" do
       call_api
       res = JSON.parse(response.body)
@@ -11,15 +12,11 @@ RSpec.describe "Api::V1::Users", type: :request do
       expect(res["data"]["attributes"]["name"]).to eq(User.last.name)
       expect(response.status).to eq 200
     end
-  end
 
-  describe "validates length" do
-    context "パスワードが8文字以下の場合" do
-      let(:user) { build(:user, password: 'pass') }
-
-      it "エラーになる" do
-        user.valid?
-        expect(user.errors.messages[:password]).to include "は8文字以上で入力してください"
+    context "userが存在しない場合" do
+      it 'レスポンスステータスが404で返る' do
+        get "/api/v1/users/dareda"
+        expect(response.status).to eq 404
       end
     end
   end
