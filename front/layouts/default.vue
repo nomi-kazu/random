@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <TheHeader @click="onDrawer()" />
+    <TheSidebar :drawer="drawer" />
     <v-main color="info">
       <v-container>
         <Nuxt />

@@ -3,6 +3,8 @@
     :dark="dark"
     :href="href"
     :to="to"
+    color="#1DA1F2"
+    class="white--text"
     @click="onClick"
   >
     <TwitterIcon />
@@ -14,7 +16,7 @@ export default {
   props: {
     dark: {
       type: Boolean,
-      default: true
+      default: false
     },
     to: {
       type: [String, Object],

@@ -1,0 +1,26 @@
+{
+  "data": {
+    "guest": ["home", "login", "register"],
+    "login": ["home", "logout"]
+  },
+  "items": {
+    "home": { "name": "Home", "to": "/", "icon": "mdi-home" },
+    "login": {
+      "name": "ログイン",
+      "to": "/signin",
+      "icon": "mdi-account-arrow-right",
+      "btn": true
+    },
+    "logout": {
+      "name": "ログアウト",
+      "icon": "mdi-account-cancel-outline",
+      "event": "logout"
+    },
+    "register": {
+      "name": "新規登録",
+      "icon": "mdi-account-plus",
+      "to": "/signup",
+      "btn": true
+    }
+  }
+}

@@ -3,6 +3,8 @@
     :dark="dark"
     :href="href"
     :to="to"
+    color="#3B5998"
+    class="white--text"
     @click="onClick"
   >
     <FacebookIcon />

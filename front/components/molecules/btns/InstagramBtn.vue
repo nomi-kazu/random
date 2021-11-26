@@ -3,6 +3,8 @@
     :dark="dark"
     :href="href"
     :to="to"
+    color="#CF2E92"
+    class="white--text"
     @click="onClick"
   >
     <InstagramIcon />
