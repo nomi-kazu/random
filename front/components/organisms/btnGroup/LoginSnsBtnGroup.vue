@@ -1,6 +1,9 @@
 <template>
   <div>
-    <!-- snsのログインボタンをまとめる -->
+    <TwitterBtn>Twitter</TwitterBtn>
+    <GoogleBtn>Google</GoogleBtn>
+    <InstagramBtn>Instagram</InstagramBtn>
+    <FacebookBtn>Facebook</FacebookBtn>
   </div>
 </template>
 
