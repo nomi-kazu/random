@@ -5,9 +5,12 @@
     :to="to"
     color="#1DA1F2"
     class="white--text"
+    :fab="fab"
+    :x-small="xSmall"
     @click="onClick"
   >
     <TwitterIcon />
+    <slot />
   </v-btn>
 </template>
 
@@ -25,8 +28,19 @@ export default {
     href: {
       type: String,
       default: undefined
+    },
+    fab: {
+      type: Boolean,
+      default: false
     }
   },
+
+  computed: {
+    xSmall () {
+      return this.fab
+    }
+  },
+
   methods: {
     onClick () {
       return this.$emit('click')

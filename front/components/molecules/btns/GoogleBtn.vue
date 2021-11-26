@@ -5,6 +5,8 @@
     :to="to"
     color="#DB4437"
     class="white--text"
+    :fab="fab"
+    :x-small="xSmall"
     @click="onClick"
   >
     <GoogleIcon />
@@ -26,8 +28,19 @@ export default {
     href: {
       type: String,
       default: undefined
+    },
+    fab: {
+      type: Boolean,
+      default: false
     }
   },
+
+  computed: {
+    xSmall () {
+      return this.fab
+    }
+  },
+
   methods: {
     onClick () {
       return this.$emit('click')
