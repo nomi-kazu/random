@@ -1,5 +1,8 @@
 <template>
-  <h1>プロフィール編集</h1>
+  <div>
+    <h1>プロフィール編集</h1>
+    <SettingProfileCard />
+  </div>
 </template>
 
 <script>
