@@ -23,6 +23,10 @@
       <p>出身</p>
       <v-text-field v-model="address" outlined dense />
     </div>
+
+    <div class="d-flex justify-center mt-5">
+      <OrangeBtn @click="onClick">保存する</OrangeBtn>
+    </div>
   </v-form>
 </template>
 
@@ -44,6 +48,12 @@ export default {
     this.profile = this.info.attributes.profile
     this.address = this.info.attributes.address
     console.log(this.info)
+  },
+  methods: {
+    onClick () {
+      const userInfo = { name: this.name, profile: this.profile, address: this.address }
+      this.$emit('save', userInfo)
+    }
   }
 }
 </script>

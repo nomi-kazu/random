@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>プロフィール編集</h1>
-    <SettingProfileCard :info="info" />
+    <SettingProfileCard :info="info" @save="save" />
   </div>
 </template>
 
@@ -13,6 +13,19 @@ export default {
       return { info: data }
     } catch (e) {
       console.error(e)
+    }
+  },
+  methods: {
+    async save (userInfo) {
+      try {
+        await this.$axios.$put(process.env.API_URL + '/api/v1/auth', {
+          name: userInfo.name,
+          profile: userInfo.profile,
+          address: userInfo.address
+        })
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 }
