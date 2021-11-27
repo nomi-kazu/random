@@ -1,7 +1,7 @@
 {
   "data": {
     "guest": ["home", "login", "register"],
-    "login": ["home", "logout"]
+    "login": ["home", "settings", "logout"]
   },
   "items": {
     "home": { "name": "Home", "to": "/", "icon": "mdi-home" },
@@ -21,6 +21,11 @@
       "icon": "mdi-account-plus",
       "to": "/signup",
       "btn": true
+    },
+    "settings": {
+      "name": "設定",
+      "icon": "mdi-cog",
+      "to": "/settings/profile"
     }
   }
 }
