@@ -1,6 +1,13 @@
 <template>
   <!-- バリデーションを追加 -->
-  <v-text-field v-model="valueModel" />
+  <v-text-field
+    v-model="valueModel"
+    label="パスワード"
+    :rules="[rules.required, rules.min]"
+    :type="showPassword ? 'text' : 'password'"
+    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+    @click:append="showPassword = !showPassword"
+  />
 </template>
 
 <script>
@@ -11,6 +18,21 @@ export default {
       default: undefined
     }
   },
+
+  data: () => {
+    return {
+      rules: {
+        required: (value) => {
+          return !!value || '入力してください'
+        },
+        min: (value) => {
+          return value.length >= 8 || '8文字以上入力してください'
+        }
+      },
+      showPassword: false
+    }
+  },
+
   computed: {
     valueModel: {
       get () {
