@@ -4,6 +4,9 @@
     color="red lighten-2"
     class="btn"
     :to="to"
+    :large="large"
+    :disabled="disabled"
+    @click="onClick"
   >
     <slot />
   </v-btn>
@@ -13,8 +16,22 @@
 export default {
   props: {
     to: {
-      type: String,
-      default: '#'
+      type: [String, Object],
+      default: undefined
+    },
+    large: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
+
+  methods: {
+    onClick () {
+      this.$emit('click')
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar>
+  <v-app-bar app clipped-left dense fixed>
     <v-app-bar-nav-icon @click="onClick()" />
 
     <v-toolbar-title>
