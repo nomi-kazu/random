@@ -35,7 +35,7 @@ export default {
           email: this.email,
           password: this.password
         })
-        this.$router.push(`/user/${this.$store.getters['authentication/id']}`)
+        this.$router.push('/settings/profile')
       } catch (e) {
         console.log(this.formError)
       }
