@@ -1,6 +1,12 @@
 <template>
   <!-- バリデーションを追加 -->
-  <v-text-field v-model="valueModel" label="メール" :rules="[rules.required]" />
+  <v-text-field 
+    v-model="valueModel"
+    label="メール"
+    outlined
+    dense
+    :rules="[rules.required]"
+  />
 </template>
 
 <script>
